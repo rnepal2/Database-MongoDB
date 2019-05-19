@@ -1,2 +1,2 @@
-# playing_database
-creating mongoDB databases, playing with them with queries
+# Database
+creating mongoDB databases and playing them with queries
