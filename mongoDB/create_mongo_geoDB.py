@@ -39,12 +39,11 @@ df = df[columns]
 # introducing new column as a GeoObject: representing the incident location
 # location object  →  GeoObject
 '''
-    location: {
-        type: "Point",
-        coordinate: [longitude, latitude]
+    loc: {
+        coordinates: [longitude, latitude]
     }
 '''
-df['location'] = df.apply(lambda row: {"type": "Point", "coordinate" : [row.longitude, row.latitude]}, 
+df['loc'] = df.apply(lambda row: {"type": "Point", "coordinate" : [row.longitude, row.latitude]}, 
                           axis=1)
 # Now dropping the old latitude and longitude columns
 df.drop(columns=['longitude', 'latitude'], inplace=True)
@@ -55,10 +54,18 @@ def remove_nan_records(records):
     for event in records:
         cleaned_event = {}
         for (key, value) in event.items():
-            if str(value) != 'nan':
+            if key != 'loc' and str(value) != 'nan':
                 cleaned_event[key] = value
+            if key == 'loc':
+                if str(value[0]) != 'nan' and str(value[1]) != 'nan':
+                    cleaned_event[key] = value
         all_events.append(cleaned_event)
     return all_events
+
+
+# if database already exists: drop it before creating it again
+if 'terrorism' in client.list_database_names():
+    client.drop_database('terrorism')
 
 # inserts events into the mongo database
 def insert_to_mongodb():
