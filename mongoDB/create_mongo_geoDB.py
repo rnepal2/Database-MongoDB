@@ -6,12 +6,6 @@ import pymongo
 # Mongo client
 client = pymongo.MongoClient("mongodb://localhost:27017")
 
-# creating a "terrorism" database 
-db = client["terrorism"]
-
-# collection: in terrorism database
-collection = db["incidents"]
-
 # preparing dataset to insert into the mongo database
 # Here we will use: Global Terrorism Database events from 2013-2017
 
@@ -74,6 +68,10 @@ def insert_to_mongodb():
     records = df.to_dict(orient='records')
     # all events to push to mongo database: terrorism-> incidents
     events_list = remove_nan_records(records=records)
+    # creating a "terrorism" database 
+    db = client["terrorism"]
+    # creating collection: in terrorism database
+    collection = db["incidents"]
     # inserting the student performance record into the collection
     collection.insert_many(events_list)
     print('Terrorism incidents inserted into terrorism database-> collection')
